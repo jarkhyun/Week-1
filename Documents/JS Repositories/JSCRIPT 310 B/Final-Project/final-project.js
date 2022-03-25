@@ -1,5 +1,18 @@
 const submit = document.querySelector('.btn');
 const wordInput = document.getElementById('word');
+const table = document.getElementsByTagName('body')[0];
+
+let colorVal = 100; 
+
+const bgColorChange = (() => {
+    if (colorVal < 230) {
+        table.style.backgroundColor = `rgb(${colorVal}, ${colorVal}, ${colorVal})`;
+        colorVal++; 
+        requestAnimationFrame(bgColorChange);
+    }
+});
+
+bgColorChange();
 
 const RANDOM_BASE_URL = `https://random-word-api.herokuapp.com/word?number=100&swear=0`;
 const DICTIONARY_BASE_URL = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/`;
@@ -24,11 +37,10 @@ fetch(RANDOM_BASE_URL)
 }); 
 
 const checkCharacters = (e) => {
-    const validChar = (/[A-Za-z]{5}/.test(wordInput.value));
+    const validChar = (/\b[A-Za-z]{5}\b/.test(wordInput.value));
     if (!validChar) {
         e.preventDefault();
         wordInput.setCustomValidity('Your word can only contain lower and uppercase letters');
-        console.log('Bad input');
     } else if (validChar) {
         wordInput.setCustomValidity('')
         checkRealWord(e);
@@ -45,12 +57,10 @@ const checkRealWord = (e) => {
         return data.json();
     })
     .then(function(responseJson) {
-        console.log(responseJson);
-        if (typeof(responseJson[0]) !== 'string') {
-                    wordMatch = true;
-
+        console.log(responseJson)
+        if (typeof(responseJson[0]) !== 'string' && responseJson.length > 0) {
+            wordMatch = true;
         };
-        
         if (wordMatch === true) {
             wordInput.setCustomValidity('');
             matchAnswer(e);
@@ -65,21 +75,20 @@ const checkRealWord = (e) => {
 const matchAnswer = (e) => {
     const wordArray = wordInput.value.split('');
     const getBox = document.getElementsByTagName('tbody')[0];
-console.log(wordArray);
-
+    
     for (i = 0; i < 5; i++) {
         getBox.children[attempts].children[i].innerHTML = wordArray[i];
         getBox.children[attempts].children[i].className = 'incorrect';
         for (j = 0; j < 5; j++) {
-            if (wordArray[i].toLocaleLowerCase() === answerArray[j].toLocaleLowerCase()) {
+            if (wordArray[i].toLowerCase() === answerArray[j].toLowerCase()) {
                 getBox.children[attempts].children[i].className = 'mixed';
             } 
-            if (wordArray[i].toLocaleLowerCase() === answerArray[i].toLocaleLowerCase()) {
+            if (wordArray[i].toLowerCase() === answerArray[i].toLowerCase()) {
                 getBox.children[attempts].children[i].className = 'correct';
             } 
         } 
     }
-    if (fiveLetterWord.toLocaleLowerCase() === wordInput.value.toLocaleLowerCase()) {
+    if (fiveLetterWord.toLowerCase() === wordInput.value.toLowerCase()) {
         attempts += 5; 
     } else {
         if (attempts >= 5) {
