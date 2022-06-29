@@ -1,23 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
+import Home from './Wordle/Home';
+import Wordle from './Wordle/Wordle';
+import Quordle from './Wordle/Quordle';
+import Nav from './Wordle/Nav';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Nav />
+      <Routes>
+          <Route path="/" element={<Wordle />} />
+          <Route path="/Sign In" element={<Home />} />
+          <Route path="/quordle" element={<Quordle />} />
+          <Route path="/*" element={<div><h1>404</h1><Link to="/">Home</Link></div>} />
+      </Routes>
     </div>
   );
 }
